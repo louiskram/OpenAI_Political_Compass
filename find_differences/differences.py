@@ -64,7 +64,7 @@ def generate_output(data):
     return "\n".join(output)
 
 def main():
-    folder_path = "outputs/2024-11-27-21-11-47" # Ordner mit JSON-Dateien
+    folder_path = "outputs/2024-11-28-09-47-18" # Ordner with JSON-Files
     data = compare_responses(folder_path)
     differences = generate_output(data)
     print(differences)

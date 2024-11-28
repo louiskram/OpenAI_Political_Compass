@@ -7,10 +7,9 @@ import time
 from datetime import datetime
 import tqdm
 import tqdm.contrib
+import yaml
 
-from Config import ConfigLoader
-
-# ------------------------------------------------------------------------------------------------ #
+### logging ###
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)-8s - %(message)s')
 
@@ -19,12 +18,22 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)-8s - 
 logging.getLogger("openai").setLevel(logging.ERROR)
 logging.getLogger("httpx").setLevel(logging.ERROR)
 
-# ------------------------------------------------------------------------------------------------ #
+### config ###
+
+config_file = "config.yaml"
+script_directory = os.path.dirname(os.path.abspath(__file__))
+full_path = os.path.join(script_directory, config_file)
+
+try:
+    with open(full_path, "r") as file:
+        config = yaml.safe_load(file)
+except FileNotFoundError:
+    logging.error(f"Config file not found: {full_path}")
+    raise
+
+### create oai-client, read in files ###
 
 date = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-config = ConfigLoader("config.yaml")
-
-# ------------------------------------------------------------------------------------------------ #
 
 with open("prompt.txt", "r") as prompt:
     prompt = prompt.read()
@@ -43,6 +52,8 @@ client = openai.OpenAI(
             api_key = config["openai_api_key"]
         )
 
+### main loop ###
+
 # create a new model for every given model in config
 # makes testing this on multiple models possible
 for model in config["models"]:
@@ -52,7 +63,7 @@ for model in config["models"]:
             instructions=prompt,
             tools=[{"type": "code_interpreter"}],
             model=model,
-            temperature=0.1
+            top_p=0.0001
         )
         logging.info(f"Model {model} created")
 
@@ -96,7 +107,8 @@ for model in config["models"]:
                 logging.error(f"{run.status=} {run.last_error=} {run.failed_at=} {run.required_action=}")
 
             # needed because of gpt-4o rate limits
-            time.sleep(5)
+            if model == "gpt-4o":
+                time.sleep(5)
 
         # write statements to json file 
         # as in https://github.com/BunsenFeng/PoliLean/blob/main/response/example.json
