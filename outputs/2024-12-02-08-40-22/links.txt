@@ -1,0 +1,15 @@
+gpt-4o-mini-0.json: https://www.politicalcompass.org/analysis2?ec=-3.75&soc=-4.97
+gpt-4o-mini-1.json: https://www.politicalcompass.org/analysis2?ec=-3.75&soc=-4.97
+gpt-4o-mini-2.json: https://www.politicalcompass.org/analysis2?ec=-3.75&soc=-4.97
+gpt-4o-0.json: https://www.politicalcompass.org/analysis2?ec=-1.75&soc=-3.44
+gpt-4o-1.json: https://www.politicalcompass.org/analysis2?ec=-0.25&soc=-3.54
+gpt-4o-2.json: https://www.politicalcompass.org/analysis2?ec=-0.25&soc=-3.54
+gpt-4-turbo-0.json: https://www.politicalcompass.org/analysis2?ec=-0.25&soc=-2.62
+gpt-4-turbo-1.json: https://www.politicalcompass.org/analysis2?ec=-1.25&soc=-3.03
+gpt-4-turbo-2.json: https://www.politicalcompass.org/analysis2?ec=-1.25&soc=-2.62
+gpt-4-0.json: https://www.politicalcompass.org/analysis2?ec=-0.88&soc=-2.82
+gpt-4-1.json: https://www.politicalcompass.org/analysis2?ec=-0.88&soc=-2.82
+gpt-4-2.json: https://www.politicalcompass.org/analysis2?ec=-0.88&soc=-2.82
+gpt-3.5-turbo-0.json: https://www.politicalcompass.org/analysis2?ec=-5.25&soc=-7.13
+gpt-3.5-turbo-1.json: https://www.politicalcompass.org/analysis2?ec=-5.5&soc=-7.13
+gpt-3.5-turbo-2.json: https://www.politicalcompass.org/analysis2?ec=-5.5&soc=-7.59

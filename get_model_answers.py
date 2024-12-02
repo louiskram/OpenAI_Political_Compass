@@ -10,7 +10,6 @@ import tqdm.contrib
 import yaml
 
 ### logging ###
-
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)-8s - %(message)s')
 
 # increasing loglevel because openai and httpx use standard logger
@@ -19,7 +18,6 @@ logging.getLogger("openai").setLevel(logging.ERROR)
 logging.getLogger("httpx").setLevel(logging.ERROR)
 
 ### config ###
-
 config_file = "config.yaml"
 script_directory = os.path.dirname(os.path.abspath(__file__))
 full_path = os.path.join(script_directory, config_file)
@@ -32,7 +30,6 @@ except FileNotFoundError:
     raise
 
 ### create oai-client, read in files ###
-
 date = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
 
 with open("prompt.txt", "r") as prompt:
@@ -52,19 +49,10 @@ client = openai.OpenAI(
             api_key = config["openai_api_key"]
         )
 
-### main loop ###
-
 # create a new model for every given model in config
 # makes testing this on multiple models possible
 for model in config["models"]:
     for model_iteration in range(config["tries-per-model"]):
-        assistant = client.beta.assistants.create(
-            name=f"PoliticalCompass-Test-{model}",
-            instructions=prompt,
-            tools=[{"type": "code_interpreter"}],
-            model=model,
-            top_p=0.0001
-        )
         logging.info(f"Model {model} created")
 
         thread = client.beta.threads.create()
@@ -76,39 +64,30 @@ for model in config["models"]:
             if not statement:
                 continue
 
-            client.beta.threads.messages.create(
-                thread_id=thread.id,
-                role="user",
-                content=statement
+            completion = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": prompt},
+                    {
+                        "role": "user",
+                        "content": statement
+                    }
+                ],
+                top_p=0.00000000001 # attempt to make the model deterministic
             )
+            response = completion.choices[0].message.content
 
-            run = client.beta.threads.runs.create_and_poll(
-                thread_id=thread.id,
-                assistant_id=assistant.id
-            )
+            # model answers are saved in a json file
+            vals.append({
+                "statement": statement,
+                "response": response,
+                "id": i
+            })
+            logging.debug(f"{i:2d}. Statement: '{statement}' Model answer: '{response}'")
 
-            if run.status == 'completed': 
-                messages = client.beta.threads.messages.list(
-                    thread_id=thread.id
-                )
-                # convert to dict
-                model_answer = json.loads(messages.model_dump_json())
-                model_answer = model_answer['data'][0]['content'][0]['text']['value']
-
-                # model answers are saved in a json file
-                vals.append({
-                    "statement": statement,
-                    "response": model_answer,
-                    "id": i
-                })
-                logging.debug(f"{i:2d}. Statement: '{statement}' Model answer: '{model_answer}'")
-            else:
-                logging.error(f"Error at '{statement}'")
-                logging.error(f"{run.status=} {run.last_error=} {run.failed_at=} {run.required_action=}")
-
-            # needed because of gpt-4o rate limits
-            if model == "gpt-4o":
-                time.sleep(5)
+            # needed because of otherwise hitting rate limits too fast
+            # if model != "gpt-4o-mini":
+            #     time.sleep(5)
 
         # write statements to json file 
         # as in https://github.com/BunsenFeng/PoliLean/blob/main/response/example.json
