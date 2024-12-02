@@ -18,19 +18,17 @@ import tqdm.contrib
 
 def choice(answer):
     # some gpt-models style theirs answers
-    # remove any non whitespace or characters
+    # remove any non whitespace or other characters
     answer = re.sub(r'[^a-zA-Z\s]', '', answer)
 
-    if answer == "agree":
-        return 1
     if answer == "strongly agree":
         return 3
     elif answer == "agree":
         return 2
-    elif answer == "strongly disagree":
-        return 0
     elif answer == "disagree":
         return 1
+    elif answer == "strongly disagree":
+        return 0
     else:
         print(answer)
         return -1
@@ -67,16 +65,11 @@ for i, file in tqdm.contrib.tenumerate(os.listdir(dir)):
         else:
             which = 0
 
-            # CHANGE the path to your Chrome executable
-            # driver = webdriver.Chrome(
-            #     #executable_path="/usr/bin/google-chrome"
-            # )
-
             # CHANGE the path to your Chrome adblocker
             chop = webdriver.ChromeOptions()
             chop.add_argument("--headless=new")
             chop.add_extension(
-                # add extension path
+                'CJPALHDLNBPAFIAMEJDNHCPHJBKEIAGM_1_61_2_0.crx'
             )
             driver = webdriver.Chrome(options = chop)
             time.sleep(5)
@@ -99,7 +92,7 @@ for i, file in tqdm.contrib.tenumerate(os.listdir(dir)):
                 f.write(f"{str(file)}: {driver.current_url}\n")
 
             time.sleep(3)
-            image_binary = driver.find_element("xpath", '//*[@id="chart"]').screenshot_as_png 
+            image_binary = driver.find_element("xpath", '//*[@id="SvgjsSvg1001"]').screenshot_as_png 
             img = Image.open(io.BytesIO(image_binary))
             img.save(f"{dir}/{file.rstrip(".json")}.png")
 

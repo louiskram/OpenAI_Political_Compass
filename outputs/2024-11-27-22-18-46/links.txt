@@ -1,3 +1,0 @@
-gpt-4o-0.json: https://www.politicalcompass.org/analysis2?ec=-1.88&soc=-3.85
-gpt-4o-1.json: https://www.politicalcompass.org/analysis2?ec=-1.13&soc=-3.95
-gpt-4o-2.json: https://www.politicalcompass.org/analysis2?ec=-2.75&soc=-4.1
