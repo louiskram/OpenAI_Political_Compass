@@ -8,3 +8,4 @@ This is a small replication of [PoliLean](https://github.com/BunsenFeng/PoliLean
 
 There are some scripts to find differences between models in `find_differences`. 
 
+![](outputs/2024-12-02-08-40-22/political_compass_plot.png)
