@@ -1,0 +1,4 @@
+gpt-4o-mini-0-prompt_0.json: https://www.politicalcompass.org/analysis2?ec=-5.75&soc=-4.1
+gpt-4o-mini-0-prompt_1.json: https://www.politicalcompass.org/analysis2?ec=-5.63&soc=-5.28
+gpt-4o-0-prompt_0.json: https://www.politicalcompass.org/analysis2?ec=-5.0&soc=-4.67
+gpt-4o-0-prompt_1.json: https://www.politicalcompass.org/analysis2?ec=-4.75&soc=-5.03

@@ -1,3 +1,4 @@
+import argparse
 import json
 import logging
 import openai
@@ -45,49 +46,55 @@ def create_openai_client(api_key):
     """Create and return an OpenAI client."""
     return openai.OpenAI(api_key=api_key)
 
-def process_statements(client, prompt, statements, models, tries_per_model, output_base_path):
+def process_statements(client, prompts, statements, models, tries_per_model, output_base_path):
     """Process statements using OpenAI models and save the responses."""
     for model in models:
-        for model_iteration in range(tries_per_model):
-            logging.info(f"Model {model} created")
-            _ = client.beta.threads.create()
-            results = []
+        for prompt_i, prompt in enumerate(prompts):
+            for model_iteration in range(tries_per_model):
+                logging.info(f"Model {model} created")
+                _ = client.beta.threads.create()
+                results = []
 
-            for i, statement in tenumerate(statements):
-                completion = client.chat.completions.create(
-                    model=model,
-                    messages=[
-                        {"role": "system", "content": prompt},
-                        {"role": "user", "content": statement}
-                    ],
-                    top_p=1e-11  # Making the model response deterministic.
-                )
-                response = completion.choices[0].message.content
-                results.append({"statement": statement, "response": response, "id": i})
-                logging.debug(f"{i:2d}. Statement: '{statement}' Model answer: '{response}'")
+                for i, statement in tenumerate(statements):
+                    completion = client.chat.completions.create(
+                        model=model,
+                        messages=[
+                            {"role": "system", "content": prompt},
+                            {"role": "user", "content": statement}
+                        ],
+                        top_p=1e-11  # Making the model response deterministic.
+                    )
+                    response = completion.choices[0].message.content
+                    results.append({"statement": statement, "response": response, "id": i})
+                    logging.debug(f"{i:2d}. Statement: '{statement}' Model answer: '{response}'")
 
-            output_filepath = os.path.join(output_base_path, f"{model}-{model_iteration}.json")
-            with open(output_filepath, "w") as f:
-                json.dump(results, f, indent=4)
-            logging.info(f"Wrote file: '{output_filepath}'")
+                output_filepath = os.path.join(output_base_path, f"{model}-{model_iteration}-prompt_{prompt_i}.json")
+                with open(output_filepath, "w") as f:
+                    json.dump(results, f, indent=4)
+                logging.info(f"Wrote file: '{output_filepath}'")
+
+def parse_arguments():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(description="Process statements with OpenAI models.")
+    parser.add_argument('--directory', type=str, default=None, help='Output directory path')
+    return parser.parse_args()
 
 def main():
     setup_logging()
+
+    args = parse_arguments()
+    output_base_path = args.directory if args.directory else os.path.join("outputs", datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
+    create_output_directory(output_base_path)
 
     script_directory = os.path.dirname(os.path.abspath(__file__))
     config_file = "config.yaml"
     config_path = os.path.join(script_directory, config_file)
     config = load_config(config_path)
 
-    prompt = read_file("prompt.txt")
     statements = read_statements("statements.csv")
 
-    date = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    output_base_path = os.path.join("outputs", date)
-    create_output_directory(output_base_path)
-
     client = create_openai_client(config["openai_api_key"])
-    process_statements(client, prompt, statements, config["models"], config["tries-per-model"], output_base_path)
+    process_statements(client, config["prompts"], statements, config["models"], config["tries-per-model"], output_base_path)
 
 if __name__ == "__main__":
     main()

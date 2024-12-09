@@ -1,5 +1,6 @@
 # slightly modified version of https://github.com/BunsenFeng/PoliLean/blob/main/step3_testing.py
 
+import argparse
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -32,7 +33,6 @@ def choice(answer):
         print(answer)
         return -1
 
-
 question_xpath = [
     ["globalisationinevitable", "countryrightorwrong", "proudofcountry", "racequalities", "enemyenemyfriend", "militaryactionlaw", "fusioninfotainment"],
     ["classthannationality", "inflationoverunemployment", "corporationstrust", "fromeachability", "freermarketfreerpeople", "bottledwater", "landcommodity", "manipulatemoney", "protectionismnecessary", "companyshareholders", "richtaxed", "paymedical", "penalisemislead", "freepredatormulinational"],
@@ -47,10 +47,22 @@ next_xpath = ["/html/body/div[2]/div[2]/main/article/form/button", "/html/body/d
 
 result_xpath = "/html/body/div[2]/div[2]/main/article/section/article[1]/section/img"
 
-dir = "outputs/2024-12-02-08-40-22"
+# Return the path of the newest directory within the specified parent directory
+parent_directory = "outputs/"
+subdirs = [os.path.join(parent_directory, d) for d in os.listdir(parent_directory) if os.path.isdir(os.path.join(parent_directory, d))]
+newest_subdir = max(subdirs, key=os.path.getmtime)
+
+# Read in input dir over command line
+# Use newest directory in parent_directory if no argument is given
+parser = argparse.ArgumentParser(description="Enter statements on Political Compass Test.")
+parser.add_argument('--directory', type=str, default=newest_subdir, help='Input directory path')
+args = parser.parse_args()
+input_directory = args.directory or os.path.join(parent_directory, newest_subdir)
+
+dir = input_directory
 for i, file in tqdm.contrib.tenumerate(os.listdir(dir)):
     result = ""
-    with open(dir + "/" + file, "r") as f:
+    with open(os.path.join(dir, file), "r") as f:
         json_f = json.load(f)
         for question in json_f:
             response = question["response"]

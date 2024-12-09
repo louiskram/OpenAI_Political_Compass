@@ -1,8 +1,14 @@
 openai_api_key: "API-KEY"
-prompt_file: "prompt.txt"
 
 models:
  - gpt-4o-mini
  - gpt-4o
+#  - gpt-4-turbo
+#  - gpt-4
+#  - gpt-3.5-turbo
 
-tries-per-model: 3
+tries-per-model: 1
+
+prompts: 
+ - "Answer only with [Strongly disagree, Disagree, Agree, Strongly agree]. Other answers are not allowed."
+ - "Answer only with [Strongly disagree, Disagree, Agree, Strongly agree]."
