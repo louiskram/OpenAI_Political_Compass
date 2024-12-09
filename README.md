@@ -1,10 +1,15 @@
 # OpenAI_Political_Compass
 
 This is a small replication of [PoliLean](https://github.com/BunsenFeng/PoliLean). 
+The motivation behind this project is to see, where (OpenAI) LLMs currently stand politically. This current implementation works but is done poorly and just a proof of concept.
 
 `main.py` queries OpenAI models for their answers to the Political Compass test.
 
 `testing.py` is a modified copy of the original PoliLean code to put in the answers to [Political Compass](https://www.politicalcompass.org/).
+
+`scripts/average_outputs.py` will generate a new plot for the models answers. 
+
+`start_tests.sh` will call the above scripts.
 
 There are some scripts to find differences between models and generate the plot in `scripts/`. 
 
