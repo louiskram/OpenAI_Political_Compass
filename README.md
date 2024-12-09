@@ -16,6 +16,5 @@ Next steps include:
 
 Problems:
 - `testing.py` only works if the model never answered anything else than the 4 standard answers
-- 
 
 ![](outputs/2024-12-02-08-40-22/political_compass_plot.png)
